@@ -19,16 +19,16 @@ public class WikimediaIndex {
 
     @PostConstruct
     public void init() throws IOException {
-        final var getIndexRequest = new GetIndexRequest("wikimedia");
+        final var getIndexRequest = new GetIndexRequest(Indexes.RECENT_CHANGE);
 
         final var exists = this.client.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
         if (exists) {
-            log.info("Index 'wikimedia' already exists");
+            log.info("Index '{}' already exists", Indexes.RECENT_CHANGE);
             return;
         }
 
-        final var createIndexRequest = new CreateIndexRequest("wikimedia");
+        final var createIndexRequest = new CreateIndexRequest(Indexes.RECENT_CHANGE);
         this.client.indices().create(createIndexRequest, RequestOptions.DEFAULT);
-        log.info("Index 'wikimedia' created successfully");
+        log.info("Index '{}' created successfully", Indexes.RECENT_CHANGE);
     }
 }

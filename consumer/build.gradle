@@ -27,6 +27,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.opensearch.client:spring-data-opensearch:2.0.0'
     implementation 'org.opensearch.client:spring-data-opensearch-starter:2.0.0'
+    implementation 'org.apache.kafka:kafka-clients:4.0.0'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
