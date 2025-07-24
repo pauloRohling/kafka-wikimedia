@@ -52,7 +52,6 @@ public class WikimediaConsumer {
             final var records = this.kafkaConsumer.poll(Duration.ofMillis(3000));
 
             StreamSupport.stream(records.spliterator(), false)
-                .map(ConsumerRecord::value)
                 .map(this::toIndexRequest)
                 .forEach(request -> this.send(request)
                     .map(DocWriteResponse::getId)
@@ -67,8 +66,10 @@ public class WikimediaConsumer {
         log.info("Closed consumer of topic '{}'", Topics.RECENT_CHANGE);
     }
 
-    private IndexRequest toIndexRequest(String value) {
-        return new IndexRequest(Indexes.RECENT_CHANGE).source(value, XContentType.JSON);
+    private IndexRequest toIndexRequest(ConsumerRecord<String, String> record) {
+        return new IndexRequest(Indexes.RECENT_CHANGE)
+            .source(record.value(), XContentType.JSON)
+            .id(record.key());
     }
 
     private Optional<IndexResponse> send(IndexRequest request) {

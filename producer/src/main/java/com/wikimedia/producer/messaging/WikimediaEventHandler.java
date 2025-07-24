@@ -1,5 +1,8 @@
 package com.wikimedia.producer.messaging;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ public class WikimediaEventHandler {
     private final SnappyWikimediaEventProducer snappyWikimediaEventProducer;
     private final ZstdWikimediaEventProducer zstdWikimediaEventProducer;
     private final WikimediaEventProducer wikimediaEventProducer;
+    private final ObjectMapper objectMapper;
 
     private final WebClient webClient = WebClient.builder()
         .baseUrl("https://stream.wikimedia.org/v2/stream/recentchange")
@@ -29,12 +33,25 @@ public class WikimediaEventHandler {
             .bodyToFlux(String.class)
             .take(Duration.ofSeconds(10))
             .subscribe(event -> {
-                log.info("Received an event: {}", event);
-                this.wikimediaEventProducer.produce(event);
-                this.gzipWikimediaEventProducer.produce(event);
-                this.lz4WikimediaEventProducer.produce(event);
-                this.snappyWikimediaEventProducer.produce(event);
-                this.zstdWikimediaEventProducer.produce(event);
+                final var key = this.getKey(event);
+                log.info("Received an event: key = {}; value = {}", key, event);
+
+                this.wikimediaEventProducer.produce(key, event);
+                this.gzipWikimediaEventProducer.produce(key, event);
+                this.lz4WikimediaEventProducer.produce(key, event);
+                this.snappyWikimediaEventProducer.produce(key, event);
+                this.zstdWikimediaEventProducer.produce(key, event);
             });
+    }
+
+    private String getKey(String event) {
+        JsonNode node;
+        try {
+            node = this.objectMapper.readTree(event);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+
+        return node.get("meta").get("id").asText();
     }
 }

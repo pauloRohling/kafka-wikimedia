@@ -26,7 +26,7 @@ public class WikimediaEventProducer {
     }
 
     public void produce(String value) {
-        this.kafkaProducer.send(new ProducerRecord<>(Topics.RECENT_CHANGE, value));
+        this.produce(null, value);
     }
 
     public void produce(String key, String value) {

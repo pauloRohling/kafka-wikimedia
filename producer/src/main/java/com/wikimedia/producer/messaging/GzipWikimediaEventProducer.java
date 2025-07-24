@@ -29,7 +29,7 @@ public class GzipWikimediaEventProducer {
     }
 
     public void produce(String value) {
-        this.kafkaProducer.send(new ProducerRecord<>(Topics.GZIP_RECENT_CHANGE, value));
+        this.produce(null, value);
     }
 
     public void produce(String key, String value) {

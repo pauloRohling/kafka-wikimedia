@@ -29,7 +29,7 @@ public class Lz4WikimediaEventProducer {
     }
 
     public void produce(String value) {
-        this.kafkaProducer.send(new ProducerRecord<>(Topics.LZ4_RECENT_CHANGE, value));
+        this.produce(null, value);
     }
 
     public void produce(String key, String value) {
