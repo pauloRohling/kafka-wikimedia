@@ -4,5 +4,5 @@ POST {{baseUrl}}/api/v1/events
 Content-Type: application/json
 
 {
-  "millis": 15000
+  "millis": 5000
 }

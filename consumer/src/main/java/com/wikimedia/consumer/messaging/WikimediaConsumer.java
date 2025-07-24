@@ -6,16 +6,15 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.opensearch.action.DocWriteResponse;
+import org.opensearch.action.bulk.BulkRequest;
+import org.opensearch.action.bulk.BulkResponse;
 import org.opensearch.action.index.IndexRequest;
-import org.opensearch.action.index.IndexResponse;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.RestHighLevelClient;
 import org.opensearch.common.xcontent.XContentType;
@@ -32,8 +31,7 @@ public class WikimediaConsumer {
 
     public WikimediaConsumer(RestHighLevelClient openSearchClient) {
         final var properties = new Properties();
-        properties.setProperty(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG,
-            "localhost:29092,localhost:39092,localhost:49092");
+        properties.setProperty(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "wikimedia.recentchange.consumergroup");
@@ -49,12 +47,22 @@ public class WikimediaConsumer {
 
         while (true) {
             final var records = this.kafkaConsumer.poll(Duration.ofMillis(3000));
+            log.info("Received {} records", records.count());
 
-            StreamSupport.stream(records.spliterator(), false)
-                .map(this::toIndexRequest)
-                .forEach(request -> this.send(request)
-                    .map(DocWriteResponse::getId)
-                    .ifPresent(s -> log.info("Sent an event to OpenSearch: {}", s)));
+            if (records.isEmpty()) {
+                continue;
+            }
+
+            final var bulkRequest = new BulkRequest();
+            for (ConsumerRecord<String, String> record : records) {
+                final var indexRequest = this.toIndexRequest(record);
+                bulkRequest.add(indexRequest);
+            }
+
+            this.send(bulkRequest).ifPresent(response -> {
+                final var items = response.getItems().length;
+                log.info("Sent a bulk to OpenSearch: {} items", items);
+            });
         }
     }
 
@@ -71,9 +79,9 @@ public class WikimediaConsumer {
             .id(record.key());
     }
 
-    private Optional<IndexResponse> send(IndexRequest request) {
+    private Optional<BulkResponse> send(BulkRequest request) {
         try {
-            final var response = this.openSearchClient.index(request, RequestOptions.DEFAULT);
+            final var response = this.openSearchClient.bulk(request, RequestOptions.DEFAULT);
             return Optional.of(response);
         } catch (Exception e) {
             return Optional.empty();
