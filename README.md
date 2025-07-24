@@ -9,53 +9,21 @@ This project requires five Kafka topics, each configured with a different compre
 > ⚠️ Make sure your Kafka broker is running on localhost:29092. Adjust the --bootstrap-server parameter if needed.
 
 ```bash
-kafka-topics \
-  --bootstrap-server localhost:29092 \
-  --create \
-  --topic wikimedia.recentchange \
-  --config "min.insync.replicas=2" \
-  --replication-factor 3 \
-  --partitions 3
-```
-
-```bash
-kafka-topics \
-  --bootstrap-server localhost:29092 \
-  --create \
-  --topic wikimedia.recentchange.gzip \
-  --config "min.insync.replicas=2" \
-  --replication-factor 3 \
-  --partitions 3
-```
-
-```bash
-kafka-topics \
-  --bootstrap-server localhost:29092 \
-  --create \
-  --topic wikimedia.recentchange.lz4 \
-  --config "min.insync.replicas=2" \
-  --replication-factor 3 \
-  --partitions 3
-```
-
-```bash
-kafka-topics \
-  --bootstrap-server localhost:29092 \
-  --create \
-  --topic wikimedia.recentchange.snappy \
-  --config "min.insync.replicas=2" \
-  --replication-factor 3 \
-  --partitions 3
-```
-
-```bash
-kafka-topics \
-  --bootstrap-server localhost:29092 \
-  --create \
-  --topic wikimedia.recentchange.zstd \
-  --config "min.insync.replicas=2" \
-  --replication-factor 3 \
-  --partitions 3
+for topic in \
+  'wikimedia.recentchange' \
+  'wikimedia.recentchange.gzip' \
+  'wikimedia.recentchange.lz4' \
+  'wikimedia.recentchange.snappy' \
+  'wikimedia.recentchange.zstd'; \
+  do
+    kafka-topics \
+    --bootstrap-server localhost:29092 \
+    --create \
+    --topic $topic \
+    --config "min.insync.replicas=2" \
+    --replication-factor 3 \
+    --partitions 3;
+done
 ```
 
 ## Results
