@@ -38,7 +38,6 @@ public class WikimediaConsumer {
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "wikimedia.recentchange.consumergroup");
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
-        properties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
 
         this.kafkaConsumer = new KafkaConsumer<>(properties);
         this.openSearchClient = openSearchClient;
