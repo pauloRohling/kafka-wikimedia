@@ -1,4 +1,4 @@
-package com.wikimedia.kafka.messaging;
+package com.wikimedia.producer.messaging;
 
 import jakarta.annotation.PostConstruct;
 import java.time.Duration;

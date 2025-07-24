@@ -1,4 +1,4 @@
-package com.wikimedia.kafka.messaging;
+package com.wikimedia.producer.messaging;
 
 import java.util.Properties;
 import org.apache.kafka.clients.CommonClientConfigs;

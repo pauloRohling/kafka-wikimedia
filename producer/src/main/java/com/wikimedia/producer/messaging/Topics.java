@@ -1,4 +1,4 @@
-package com.wikimedia.kafka.messaging;
+package com.wikimedia.producer.messaging;
 
 public abstract class Topics {
 

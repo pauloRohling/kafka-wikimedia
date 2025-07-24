@@ -1,4 +1,4 @@
-package com.wikimedia.kafka.messaging;
+package com.wikimedia.producer.messaging;
 
 import java.util.Properties;
 import org.apache.kafka.clients.CommonClientConfigs;
@@ -9,24 +9,27 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.stereotype.Component;
 
 @Component
-public class WikimediaEventProducer {
+public class ZstdWikimediaEventProducer {
 
     private final KafkaProducer<String, String> kafkaProducer;
 
-    public WikimediaEventProducer() {
+    public ZstdWikimediaEventProducer() {
         final var properties = new Properties();
         properties.setProperty(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.setProperty(ProducerConfig.COMPRESSION_TYPE_CONFIG, "zstd");
+        properties.setProperty(ProducerConfig.LINGER_MS_CONFIG, "20");
+        properties.setProperty(ProducerConfig.BATCH_SIZE_CONFIG, "32768"); // 32KB
 
         this.kafkaProducer = new KafkaProducer<>(properties);
     }
 
     public void produce(String value) {
-        this.kafkaProducer.send(new ProducerRecord<>(Topics.RECENT_CHANGE, value));
+        this.kafkaProducer.send(new ProducerRecord<>(Topics.ZSTD_RECENT_CHANGE, value));
     }
 
     public void produce(String key, String value) {
-        this.kafkaProducer.send(new ProducerRecord<>(Topics.RECENT_CHANGE, key, value));
+        this.kafkaProducer.send(new ProducerRecord<>(Topics.ZSTD_RECENT_CHANGE, key, value));
     }
 }

@@ -6,6 +6,8 @@ This project demonstrates how different Kafka compression algorithms perform whe
 
 This project requires five Kafka topics, each configured with a different compression strategy. You can create them using the following CLI commands:
 
+> ⚠️ Make sure your Kafka broker is running on localhost:9094. Adjust the --bootstrap-server parameter if needed.
+
 ```bash
 kafka-topics \
   --bootstrap-server localhost:9094 \
@@ -51,9 +53,7 @@ kafka-topics \
   --partitions 3
 ```
 
-> ⚠️ Make sure your Kafka broker is running on localhost:9094. Adjust the --bootstrap-server parameter if needed.
-
-# Results
+## Results
 
 As shown in the figure below, `gzip` and `zstd` achieved better compression rates for the Wikimedia events. This comparison focuses solely on compression ratio. Although it does not account for CPU usage or latency overhead introduced by each algorithm, this benchmark provides a useful perspective on how compression algorithms behave under real-world streaming scenarios.
 

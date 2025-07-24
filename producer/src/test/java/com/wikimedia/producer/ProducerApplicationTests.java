@@ -1,10 +1,10 @@
-package com.wikimedia.kafka;
+package com.wikimedia.producer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class KafkaApplicationTests {
+class ProducerApplicationTests {
 
     @Test
     void contextLoads() {
