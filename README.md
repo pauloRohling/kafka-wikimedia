@@ -6,50 +6,55 @@ This project demonstrates how different Kafka compression algorithms perform whe
 
 This project requires five Kafka topics, each configured with a different compression strategy. You can create them using the following CLI commands:
 
-> ⚠️ Make sure your Kafka broker is running on localhost:9094. Adjust the --bootstrap-server parameter if needed.
+> ⚠️ Make sure your Kafka broker is running on localhost:29092. Adjust the --bootstrap-server parameter if needed.
 
 ```bash
 kafka-topics \
-  --bootstrap-server localhost:9094 \
+  --bootstrap-server localhost:29092 \
   --create \
   --topic wikimedia.recentchange \
-  --replication-factor 1 \
+  --config "min.insync.replicas=2" \
+  --replication-factor 3 \
   --partitions 3
 ```
 
 ```bash
 kafka-topics \
-  --bootstrap-server localhost:9094 \
+  --bootstrap-server localhost:29092 \
   --create \
   --topic wikimedia.recentchange.gzip \
-  --replication-factor 1 \
+  --config "min.insync.replicas=2" \
+  --replication-factor 3 \
   --partitions 3
 ```
 
 ```bash
 kafka-topics \
-  --bootstrap-server localhost:9094 \
+  --bootstrap-server localhost:29092 \
   --create \
   --topic wikimedia.recentchange.lz4 \
-  --replication-factor 1 \
+  --config "min.insync.replicas=2" \
+  --replication-factor 3 \
   --partitions 3
 ```
 
 ```bash
 kafka-topics \
-  --bootstrap-server localhost:9094 \
+  --bootstrap-server localhost:29092 \
   --create \
   --topic wikimedia.recentchange.snappy \
-  --replication-factor 1 \
+  --config "min.insync.replicas=2" \
+  --replication-factor 3 \
   --partitions 3
 ```
 
 ```bash
 kafka-topics \
-  --bootstrap-server localhost:9094 \
+  --bootstrap-server localhost:29092 \
   --create \
   --topic wikimedia.recentchange.zstd \
-  --replication-factor 1 \
+  --config "min.insync.replicas=2" \
+  --replication-factor 3 \
   --partitions 3
 ```
 
