@@ -2,8 +2,6 @@ services:
   controller-1:
     image: apache/kafka:4.0.0
     container_name: controller-1
-    networks:
-      - kafka-network
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: controller
@@ -16,8 +14,6 @@ services:
   controller-2:
     image: apache/kafka:4.0.0
     container_name: controller-2
-    networks:
-      - kafka-network
     environment:
       KAFKA_NODE_ID: 2
       KAFKA_PROCESS_ROLES: controller
@@ -30,8 +26,6 @@ services:
   controller-3:
     image: apache/kafka:4.0.0
     container_name: controller-3
-    networks:
-      - kafka-network
     environment:
       KAFKA_NODE_ID: 3
       KAFKA_PROCESS_ROLES: controller
@@ -44,8 +38,6 @@ services:
   broker-1:
     image: apache/kafka:4.0.0
     container_name: broker-1
-    networks:
-      - kafka-network
     ports:
       - "29092:9092"
     environment:
@@ -66,8 +58,6 @@ services:
   broker-2:
     image: apache/kafka:4.0.0
     container_name: broker-2
-    networks:
-      - kafka-network
     ports:
       - "39092:9092"
     environment:
@@ -88,8 +78,6 @@ services:
   broker-3:
     image: apache/kafka:4.0.0
     container_name: broker-3
-    networks:
-      - kafka-network
     ports:
       - "49092:9092"
     environment:
@@ -116,8 +104,6 @@ services:
       - broker-3
     ports:
       - "8081:8080"
-    networks:
-      - kafka-network
     environment:
       DYNAMIC_CONFIG_ENABLED: "true"
       KAFKA_CLUSTERS_0_NAME: local
@@ -128,8 +114,6 @@ services:
     ports:
       - "9200:9200"
       - "9600:9600"
-    networks:
-      - kafka-network
     environment:
       OPENSEARCH_INITIAL_ADMIN_PASSWORD: 4dM1n.P@ssw0rd
       discovery.type: single-node
@@ -139,12 +123,6 @@ services:
     image: opensearchproject/opensearch-dashboards:3.1.0
     ports:
       - "5601:5601"
-    networks:
-      - kafka-network
     environment:
       OPENSEARCH_HOSTS: '["http://opensearch:9200"]'
       DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"
-
-networks:
-  kafka-network:
-    driver: bridge
