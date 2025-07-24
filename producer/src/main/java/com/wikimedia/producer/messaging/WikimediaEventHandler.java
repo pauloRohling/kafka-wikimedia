@@ -27,7 +27,7 @@ public class WikimediaEventHandler {
         this.webClient.get()
             .retrieve()
             .bodyToFlux(String.class)
-            .take(Duration.ofMinutes(1))
+            .take(Duration.ofSeconds(10))
             .subscribe(event -> {
                 log.info("Received an event: {}", event);
                 this.wikimediaEventProducer.produce(event);
