@@ -1,0 +1,8 @@
+@baseUrl = http://localhost:9000
+
+POST {{baseUrl}}/api/v1/events
+Content-Type: application/json
+
+{
+  "millis": 15000
+}

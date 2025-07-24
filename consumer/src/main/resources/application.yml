@@ -3,4 +3,4 @@ spring:
     name: consumer
 
 server:
-  port: 0
+  port: 9001

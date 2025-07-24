@@ -1,19 +1,26 @@
-package com.wikimedia.producer.messaging;
+package com.wikimedia.producer.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
+import com.wikimedia.producer.domain.LoadRequest;
+import com.wikimedia.producer.messaging.GzipWikimediaEventProducer;
+import com.wikimedia.producer.messaging.Lz4WikimediaEventProducer;
+import com.wikimedia.producer.messaging.SnappyWikimediaEventProducer;
+import com.wikimedia.producer.messaging.WikimediaEventProducer;
+import com.wikimedia.producer.messaging.ZstdWikimediaEventProducer;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-@Component
+@Service
 @RequiredArgsConstructor
 @Slf4j
-public class WikimediaEventHandler {
+public class WikimediaLoadSimulator {
 
     private final GzipWikimediaEventProducer gzipWikimediaEventProducer;
     private final Lz4WikimediaEventProducer lz4WikimediaEventProducer;
@@ -26,13 +33,12 @@ public class WikimediaEventHandler {
         .baseUrl("https://stream.wikimedia.org/v2/stream/recentchange")
         .build();
 
-    @PostConstruct
-    public void onEvent() {
-        this.webClient.get()
+    public Flux<String> simulate(LoadRequest loadRequest) {
+        return this.webClient.get()
             .retrieve()
             .bodyToFlux(String.class)
-            .take(Duration.ofSeconds(10))
-            .subscribe(event -> {
+            .take(Duration.ofMillis(loadRequest.millis()))
+            .flatMap(event -> Mono.fromCallable(() -> {
                 final var key = this.getKey(event);
                 log.info("Received an event: key = {}; value = {}", key, event);
 
@@ -41,7 +47,8 @@ public class WikimediaEventHandler {
                 this.lz4WikimediaEventProducer.produce(key, event);
                 this.snappyWikimediaEventProducer.produce(key, event);
                 this.zstdWikimediaEventProducer.produce(key, event);
-            });
+                return key;
+            }));
     }
 
     private String getKey(String event) {

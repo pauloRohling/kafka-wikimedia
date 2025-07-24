@@ -3,4 +3,4 @@ spring:
     name: producer
 
 server:
-  port: 0
+  port: 9000
