@@ -12,6 +12,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Slf4j
 public class WikimediaEventHandler {
 
+    private final GzipWikimediaEventProducer gzipWikimediaEventProducer;
+    private final Lz4WikimediaEventProducer lz4WikimediaEventProducer;
+    private final SnappyWikimediaEventProducer snappyWikimediaEventProducer;
+    private final ZstdWikimediaEventProducer zstdWikimediaEventProducer;
     private final WikimediaEventProducer wikimediaEventProducer;
 
     private final WebClient webClient = WebClient.builder()
@@ -23,10 +27,14 @@ public class WikimediaEventHandler {
         this.webClient.get()
             .retrieve()
             .bodyToFlux(String.class)
-            .take(Duration.ofSeconds(5))
+            .take(Duration.ofMinutes(1))
             .subscribe(event -> {
                 log.info("Received an event: {}", event);
                 this.wikimediaEventProducer.produce(event);
+                this.gzipWikimediaEventProducer.produce(event);
+                this.lz4WikimediaEventProducer.produce(event);
+                this.snappyWikimediaEventProducer.produce(event);
+                this.zstdWikimediaEventProducer.produce(event);
             });
     }
 }
