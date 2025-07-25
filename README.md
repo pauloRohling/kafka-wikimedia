@@ -6,7 +6,7 @@ This project demonstrates how different Kafka compression algorithms perform whe
 
 This project requires five Kafka topics, each configured with a different compression strategy. You can create them using the following CLI commands:
 
-> ⚠️ Make sure your Kafka broker is running on localhost:29092. Adjust the --bootstrap-server parameter if needed.
+> ⚠️ Make sure your Kafka broker is running on localhost:9094. Adjust the --bootstrap-server parameter if needed.
 
 ```bash
 for topic in \
@@ -17,11 +17,10 @@ for topic in \
   'wikimedia.recentchange.zstd'; \
   do
     kafka-topics \
-    --bootstrap-server localhost:29092 \
+    --bootstrap-server localhost:9094 \
     --create \
     --topic $topic \
-    --config "min.insync.replicas=2" \
-    --replication-factor 3 \
+    --replication-factor 1 \
     --partitions 3;
 done
 ```

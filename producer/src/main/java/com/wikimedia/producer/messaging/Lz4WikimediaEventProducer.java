@@ -18,7 +18,7 @@ public class Lz4WikimediaEventProducer {
 
     public Lz4WikimediaEventProducer() {
         final var properties = new Properties();
-        properties.setProperty(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        properties.setProperty(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.COMPRESSION_TYPE_CONFIG, "lz4");
@@ -28,12 +28,8 @@ public class Lz4WikimediaEventProducer {
         this.kafkaProducer = new KafkaProducer<>(properties);
     }
 
-    public void produce(String value) {
-        this.kafkaProducer.send(new ProducerRecord<>(Topics.LZ4_RECENT_CHANGE, value));
-    }
-
-    public void flush() {
-        this.kafkaProducer.flush();
+    public void produce(String key, String value) {
+        this.kafkaProducer.send(new ProducerRecord<>(Topics.LZ4_RECENT_CHANGE, key, value));
     }
 
     @PreDestroy

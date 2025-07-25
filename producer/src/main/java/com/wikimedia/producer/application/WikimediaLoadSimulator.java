@@ -39,13 +39,14 @@ public class WikimediaLoadSimulator {
             .bodyToFlux(String.class)
             .take(Duration.ofMillis(loadRequest.millis()))
             .concatMap(event -> Mono.fromCallable(() -> {
-                log.info("Received an event: value = {}", event);
+                final var key = this.getKey(event);
+                log.info("Received an event: key = {}; value = {}", key, event);
 
-                this.wikimediaEventProducer.produce(event);
-                this.gzipWikimediaEventProducer.produce(event);
-                this.lz4WikimediaEventProducer.produce(event);
-                this.snappyWikimediaEventProducer.produce(event);
-                this.zstdWikimediaEventProducer.produce(event);
+                this.wikimediaEventProducer.produce(key, event);
+                this.gzipWikimediaEventProducer.produce(key, event);
+                this.lz4WikimediaEventProducer.produce(key, event);
+                this.snappyWikimediaEventProducer.produce(key, event);
+                this.zstdWikimediaEventProducer.produce(key, event);
                 return event;
             }));
     }

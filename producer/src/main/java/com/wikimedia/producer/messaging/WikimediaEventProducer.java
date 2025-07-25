@@ -18,19 +18,15 @@ public class WikimediaEventProducer {
 
     public WikimediaEventProducer() {
         final var properties = new Properties();
-        properties.setProperty(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        properties.setProperty(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         this.kafkaProducer = new KafkaProducer<>(properties);
     }
 
-    public void produce(String value) {
-        this.kafkaProducer.send(new ProducerRecord<>(Topics.RECENT_CHANGE, value));
-    }
-
-    public void flush() {
-        this.kafkaProducer.flush();
+    public void produce(String key, String value) {
+        this.kafkaProducer.send(new ProducerRecord<>(Topics.RECENT_CHANGE, key, value));
     }
 
     @PreDestroy
