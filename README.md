@@ -1,7 +1,6 @@
 # Kafka Wikimedia Compression Benchmark
 
-This project demonstrates how different Kafka compression algorithms perform when handling real-time events from
-Wikimedia.
+This project explores different compression algorithms in Kafka using real-time events from Wikimedia. It sets up a Kafka producer and consumer to process Wikimedia events, using various compression strategies like `gzip`, `lz4`, `snappy`, and `zstd`. The received events are then sent to OpenSearch for indexing and analysis.
 
 ## Setup
 
