@@ -7,7 +7,7 @@ This project explores different compression algorithms in Kafka using real-time 
 This project requires five Kafka topics, each configured with a different compression strategy. You can create them
 using the following CLI commands:
 
-> ⚠️ Make sure your Kafka broker is running on localhost:9094. Adjust the --bootstrap-server parameter if needed.
+> ⚠️ Make sure your Kafka broker is running on localhost:9092. Adjust the --bootstrap-server parameter if needed.
 
 ```bash
 for topic in \
@@ -18,7 +18,7 @@ for topic in \
   'wikimedia.recentchange.zstd'; \
   do
     kafka-topics \
-    --bootstrap-server localhost:9094 \
+    --bootstrap-server localhost:9092 \
     --create \
     --topic $topic \
     --replication-factor 1 \
@@ -32,6 +32,18 @@ This project is divided into two main components:
 
 - **Producer**: This component generates and sends events to the Kafka topics.
 - **Consumer**: This component reads events from the Kafka topics and sends them to OpenSearch.
+
+## Ports
+
+To connect to services in Docker, refer to the following ports:
+
+- Kafka broker: 9092
+- Kafka broker JMX: 9101
+- Kafka UI: 9090
+- Producer Application: 9000
+- Consumer Application: 9001
+- OpenSearch Client: 9200
+- OpenSearch Dashboard: 5601
 
 ## Producer API
 
